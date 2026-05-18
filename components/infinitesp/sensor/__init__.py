@@ -36,6 +36,7 @@ SENSOR_TYPES = {
     "odu_liquid_temp": {"key": "odu_liquid_temp", "unit": "\u00b0F"},         # Liquid line / expansion temperature
     "odu_indoor_coil_temp": {"key": "odu_indoor_coil_temp", "unit": "\u00b0F"}, # Indoor coil temperature
     "odu_discharge_temp": {"key": "odu_discharge_temp", "unit": "\u00b0F"},   # Discharge / hot gas temperature
+    "damper_position": {"key": "damper_position", "unit": "%"},               # Zone damper position
 }
 
 CONFIG_SCHEMA = cv.All(

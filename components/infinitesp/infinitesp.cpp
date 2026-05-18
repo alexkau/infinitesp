@@ -398,8 +398,8 @@ void InfinitESPComponent::handle_passive_frame_() {
   // that the thermostat polls. We observe but don't initiate these transactions.
   if (current_frame_.func == FUNC_REPLY && current_frame_.payload.size() > 3) {
     uint8_t src_class = current_frame_.src >> 4;
-    // Class 4 = Indoor Unit, Class 5 = Outdoor Unit
-    if (src_class == 4 || src_class == 5) {
+    // Class 4 = Indoor Unit, Class 5 = Outdoor Unit, Class 6 = Damper Control Module
+    if (src_class == 4 || src_class == 5 || src_class == 6) {
       uint8_t table = current_frame_.payload[1];
       uint8_t row = current_frame_.payload[2];
       uint16_t reg_key = (table << 8) | row;
@@ -451,6 +451,12 @@ void InfinitESPComponent::handle_passive_frame_() {
                  decode_int16_f_(data, 2), decode_int16_f_(data, 6),
                  decode_int16_f_(data, 10), decode_int16_f_(data, 14),
                  decode_int16_f_(data, 18), decode_int16_f_(data, 22));
+      }
+
+      // Damper register 0302: damper positions
+      if (src_class == 6 && reg_key == REG_DAMPER_STATUS && data.size() >= 24) {
+        ESP_LOGD("InfinitESP", "Damper 0302: block0=[%02X %02X %02X %02X] block1=[%02X %02X %02X %02X]",
+                 data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
       }
 
       notify_devices_(current_frame_.src, reg_key);
