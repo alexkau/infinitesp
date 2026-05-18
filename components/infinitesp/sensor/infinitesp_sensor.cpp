@@ -162,7 +162,7 @@ void InfinitESPSensor::on_register_update(uint8_t device_addr, uint16_t register
     if (device_addr == target_addr) {
       auto *data = parent_->get_register(device_addr, REG_DAMPER_STATUS);
       if (data && data->size() >= 8)
-        value = parent_->decode_int16_f_(data->at(zone_ - 1));
+        value = data->at(zone_ - 1);
     }
   }
 
