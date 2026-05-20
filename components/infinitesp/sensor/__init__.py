@@ -16,6 +16,7 @@ SENSOR_TYPES = {
     "vacation_max_temp": {"key": "vacation_max_temp", "unit": "\u00b0F"},
     "blower_rpm": {"key": "blower_rpm", "unit": "RPM"},
     "airflow_cfm": {"key": "airflow_cfm", "unit": "CFM"},
+    "static_pressure": {"key": "static_pressure", "unit": "inH2O"},
     "compressor_rpm": {"key": "compressor_rpm", "unit": "RPM"},
     "odu_demand": {"key": "odu_demand", "unit": "%"},
     "odu_stage": {"key": "odu_stage", "unit": ""},

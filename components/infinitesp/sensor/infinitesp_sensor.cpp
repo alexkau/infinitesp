@@ -59,6 +59,15 @@ void InfinitESPSensor::on_register_update(uint8_t device_addr, uint16_t register
     }
   }
 
+  // Static Pressure from register 0316
+  if (register_key == REG_IDU_CONFIG && sensor_type_ == "static_pressure") {
+    auto *data = parent_->get_register(device_addr, REG_IDU_CONFIG);
+    if (data && data->size() >= 12) {
+      uint16_t raw_sp = ((uint16_t) data->at(10) << 8) | data->at(11);
+      value = raw_sp / 512.0f;
+    }
+  }
+
   // ODU (Outdoor Unit) passively snooped registers
   // Compressor RPM from register 0604 (first uint16 BE pair = current speed)
   if (register_key == REG_ODU_COMP_SPEED && sensor_type_ == "compressor_rpm") {
