@@ -416,17 +416,13 @@ void InfinitESPComponent::handle_passive_frame_() {
           uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
           bool elec_heat = (data[0] & 0x03) != 0;
           float static_pressure = (((uint16_t) data[10] << 8) | data[11]) / 512.0f;
-          ESP_LOGD("InfinitESP", "IDU 0316 (full): size=%zu cfm=%u heat=%d sp=%.2f", data.size(), airflow_cfm, elec_heat, static_pressure);
-        } else if (data.size() == 2) {
-          // Thermostat often polls just the static pressure as a 2-byte partial read
-          float static_pressure = (((uint16_t) data[0] << 8) | data[1]) / 512.0f;
-          ESP_LOGD("InfinitESP", "IDU 0316 (partial): size=%zu sp=%.2f", data.size(), static_pressure);
+          ESP_LOGI("InfinitESP", "IDU 0316 (full): size=%zu cfm=%u heat=%d sp=%.2f", data.size(), airflow_cfm, elec_heat, static_pressure);
         } else if (data.size() >= 8) {
           uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
           bool elec_heat = (data[0] & 0x03) != 0;
-          ESP_LOGD("InfinitESP", "IDU 0316: size=%zu cfm=%u heat=%d", data.size(), airflow_cfm, elec_heat);
+          ESP_LOGI("InfinitESP", "IDU 0316: size=%zu cfm=%u heat=%d", data.size(), airflow_cfm, elec_heat);
         } else {
-          ESP_LOGD("InfinitESP", "IDU 0316: size=%zu raw=[%02X %02X]", data.size(), data.size() > 0 ? data[0] : 0, data.size() > 1 ? data[1] : 0);
+          ESP_LOGI("InfinitESP", "IDU 0316: size=%zu raw=[%02X %02X]", data.size(), data.size() > 0 ? data[0] : 0, data.size() > 1 ? data[1] : 0);
         }
       }
 
