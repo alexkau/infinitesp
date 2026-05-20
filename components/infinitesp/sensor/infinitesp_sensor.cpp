@@ -63,8 +63,8 @@ void InfinitESPSensor::on_register_update(uint8_t device_addr, uint16_t register
   if (register_key == REG_IDU_CONFIG && sensor_type_ == "static_pressure") {
     auto *data = parent_->get_register(device_addr, REG_IDU_CONFIG);
     if (data && data->size() >= 14) {
-      uint16_t raw_sp = ((uint16_t) data->at(10) << 8) | data->at(11);
-      value = raw_sp / 512.0f;
+      uint16_t raw_sp = ((uint16_t) data->at(7) << 8) | data->at(8);
+      value = raw_sp / 25600.0f;
     }
   }
 

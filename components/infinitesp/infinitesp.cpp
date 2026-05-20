@@ -413,7 +413,7 @@ void InfinitESPComponent::handle_passive_frame_() {
         if (data.size() >= 14) {
           uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
           bool elec_heat = (data[0] & 0x03) != 0;
-          float static_pressure = (((uint16_t) data[10] << 8) | data[11]) / 512.0f;
+          float static_pressure = (((uint16_t) data[7] << 8) | data[8]) / 25600.0f;
           ESP_LOGI("InfinitESP", "IDU 0316 (full): size=%zu cfm=%u heat=%d sp=%.2f", data.size(), airflow_cfm, elec_heat, static_pressure);
         } else if (data.size() >= 8) {
           uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
