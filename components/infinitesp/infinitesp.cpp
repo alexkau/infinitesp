@@ -78,11 +78,9 @@ void InfinitESPComponent::loop() {
   uint32_t loop_start = millis();
 
   // Echo suppression: after TX, drain any echo bytes from the RS485 transceiver.
-  // The echo arrives within ~60ms of TX completion (38400 baud + TCP RTT).
-  // Large frames (133-byte REPLY) take ~35ms just to transmit at 38400 baud.
-  // We drain for 60ms after each TX to avoid corrupted frame parsing.
-  // This sacrifices some passively-snooped bus data but prevents CRC failure cascades.
-  if (last_tx_done_time_ > 0 && (loop_start - last_tx_done_time_ < 60)) {
+  // For direct UART with hardware flow control, echo is non-existent or instantaneous.
+  // We reduce this from 60ms to 5ms to prevent deafness that was swallowing valid frames (like 0316 replies).
+  if (last_tx_done_time_ > 0 && (loop_start - last_tx_done_time_ < 5)) {
     int drained = 0;
     while (available()) {
       uint8_t discard;
