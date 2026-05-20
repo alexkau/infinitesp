@@ -411,14 +411,22 @@ void InfinitESPComponent::handle_passive_frame_() {
         uint16_t blower_rpm = ((uint16_t) data[1] << 8) | data[2];
         ESP_LOGD("InfinitESP", "IDU 0306: blower_rpm=%u", blower_rpm);
       }
-      if (src_class == 4 && reg_key == REG_IDU_CONFIG && data.size() >= 8) {
-        uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
-        bool elec_heat = (data[0] & 0x03) != 0;
-        if (data.size() >= 23) {
-          float static_pressure = (((uint16_t) data[21] << 8) | data[22]) / 512.0f;
-          ESP_LOGD("InfinitESP", "IDU 0316: airflow_cfm=%u elec_heat=%d static_pressure=%.2f", airflow_cfm, elec_heat, static_pressure);
+      if (src_class == 4 && reg_key == REG_IDU_CONFIG) {
+        if (data.size() >= 12) {
+          uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
+          bool elec_heat = (data[0] & 0x03) != 0;
+          float static_pressure = (((uint16_t) data[10] << 8) | data[11]) / 512.0f;
+          ESP_LOGD("InfinitESP", "IDU 0316 (full): size=%zu cfm=%u heat=%d sp=%.2f", data.size(), airflow_cfm, elec_heat, static_pressure);
+        } else if (data.size() == 2) {
+          // Thermostat often polls just the static pressure as a 2-byte partial read
+          float static_pressure = (((uint16_t) data[0] << 8) | data[1]) / 512.0f;
+          ESP_LOGD("InfinitESP", "IDU 0316 (partial): size=%zu sp=%.2f", data.size(), static_pressure);
+        } else if (data.size() >= 8) {
+          uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
+          bool elec_heat = (data[0] & 0x03) != 0;
+          ESP_LOGD("InfinitESP", "IDU 0316: size=%zu cfm=%u heat=%d", data.size(), airflow_cfm, elec_heat);
         } else {
-          ESP_LOGD("InfinitESP", "IDU 0316: airflow_cfm=%u elec_heat=%d", airflow_cfm, elec_heat);
+          ESP_LOGD("InfinitESP", "IDU 0316: size=%zu raw=[%02X %02X]", data.size(), data.size() > 0 ? data[0] : 0, data.size() > 1 ? data[1] : 0);
         }
       }
 
@@ -458,9 +466,9 @@ void InfinitESPComponent::handle_passive_frame_() {
                  decode_int16_f_(data, 18), decode_int16_f_(data, 22));
       }
 
-      // Damper register 0319: damper positions
-      if (src_class == 6 && reg_key == REG_DAMPER_STATUS && data.size() >= 8) {
-        ESP_LOGD("InfinitESP", "Damper 0319: zones=[%02X %02X %02X %02X %02X %02X %02X %02X]",
+      // Damper register 0302: damper positions
+      if (src_class == 6 && reg_key == REG_DAMPER_STATUS && data.size() >= 24) {
+        ESP_LOGD("InfinitESP", "Damper 0302: block0=[%02X %02X %02X %02X] block1=[%02X %02X %02X %02X]",
                  data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
       }
 

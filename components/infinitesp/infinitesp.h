@@ -117,7 +117,7 @@ static const uint8_t REG3B03_ZONE_NAMES = 54;         // zone_names[8], 12 chars
 static const uint8_t REG3B03_SIZE = 150;
 
 // Damper register keys
-static const uint16_t REG_DAMPER_STATUS = 0x0319;  // Damper positions
+static const uint16_t REG_DAMPER_STATUS = 0x0302;  // Damper positions
 
 // IDU (Indoor Unit / Furnace / Air Handler) register keys
 // These are passively snooped from thermostat↔IDU traffic.

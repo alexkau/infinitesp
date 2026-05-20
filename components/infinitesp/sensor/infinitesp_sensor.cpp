@@ -62,8 +62,12 @@ void InfinitESPSensor::on_register_update(uint8_t device_addr, uint16_t register
   // Static Pressure from register 0316
   if (register_key == REG_IDU_CONFIG && sensor_type_ == "static_pressure") {
     auto *data = parent_->get_register(device_addr, REG_IDU_CONFIG);
-    if (data && data->size() >= 23) {
-      uint16_t raw_sp = ((uint16_t) data->at(21) << 8) | data->at(22);
+    if (data && data->size() >= 12) {
+      uint16_t raw_sp = ((uint16_t) data->at(10) << 8) | data->at(11);
+      value = raw_sp / 512.0f;
+    } else if (data && data->size() == 2) {
+      // Handle partial 2-byte read often used for static pressure polling
+      uint16_t raw_sp = ((uint16_t) data->at(0) << 8) | data->at(1);
       value = raw_sp / 512.0f;
     }
   }
@@ -165,13 +169,24 @@ void InfinitESPSensor::on_register_update(uint8_t device_addr, uint16_t register
       value = parent_->decode_int16_f_(*data, 22);
   }
 
-  // Damper positions from register 0319
+  // Damper positions from register 0302
   if (register_key == REG_DAMPER_STATUS && sensor_type_ == "damper_position") {
     uint8_t target_addr = (zone_ <= 4) ? 0x60 : 0x61;
     if (device_addr == target_addr) {
       auto *data = parent_->get_register(device_addr, REG_DAMPER_STATUS);
-      if (data && data->size() >= 8)
-        value = data->at(zone_ - 1);
+      if (data && data->size() >= 24) {
+        uint8_t target_idx = ((zone_ - 1) % 4) + 1;
+        // Data contains 6 blocks of 4 bytes:
+        // [status, local_idx, unk, position_pct]
+        for (size_t i = 0; i < 6; i++) {
+          if (data->at(i * 4 + 1) == target_idx) {
+            // First byte often indicates state (e.g. 04=unused/closed, 01=active)
+            // Fourth byte is percentage open (0-100)
+            value = (float) data->at(i * 4 + 3);
+            break;
+          }
+        }
+      }
     }
   }
 
