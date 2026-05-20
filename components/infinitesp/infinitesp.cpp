@@ -414,8 +414,8 @@ void InfinitESPComponent::handle_passive_frame_() {
       if (src_class == 4 && reg_key == REG_IDU_CONFIG && data.size() >= 8) {
         uint16_t airflow_cfm = ((uint16_t) data[4] << 8) | data[5];
         bool elec_heat = (data[0] & 0x03) != 0;
-        if (data.size() >= 12) {
-          float static_pressure = (((uint16_t) data[10] << 8) | data[11]) / 512.0f;
+        if (data.size() >= 23) {
+          float static_pressure = (((uint16_t) data[21] << 8) | data[22]) / 512.0f;
           ESP_LOGD("InfinitESP", "IDU 0316: airflow_cfm=%u elec_heat=%d static_pressure=%.2f", airflow_cfm, elec_heat, static_pressure);
         } else {
           ESP_LOGD("InfinitESP", "IDU 0316: airflow_cfm=%u elec_heat=%d", airflow_cfm, elec_heat);
