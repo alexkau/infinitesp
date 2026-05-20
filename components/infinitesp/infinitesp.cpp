@@ -466,9 +466,9 @@ void InfinitESPComponent::handle_passive_frame_() {
                  decode_int16_f_(data, 18), decode_int16_f_(data, 22));
       }
 
-      // Damper register 0302: damper positions
-      if (src_class == 6 && reg_key == REG_DAMPER_STATUS && data.size() >= 24) {
-        ESP_LOGD("InfinitESP", "Damper 0302: block0=[%02X %02X %02X %02X] block1=[%02X %02X %02X %02X]",
+      // Damper register 0319: damper positions
+      if (src_class == 6 && reg_key == REG_DAMPER_STATUS && data.size() >= 8) {
+        ESP_LOGD("InfinitESP", "Damper 0319: zones=[%02X %02X %02X %02X %02X %02X %02X %02X]",
                  data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
       }
 
